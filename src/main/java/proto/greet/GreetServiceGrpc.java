@@ -1,11 +1,12 @@
 package proto.greet;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
+import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ClientCalls.futureUnaryCall;
+import static io.grpc.stub.ClientCalls.*;
+import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+import static io.grpc.stub.ServerCalls.*;
 
 /**
  */
@@ -51,6 +52,38 @@ public final class GreetServiceGrpc {
      return getGreetMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<Greeting.GreetRequest,
+      Greeting.GreetResponse> getGreetManyTimesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "greetManyTimes",
+      requestType = Greeting.GreetRequest.class,
+      responseType = Greeting.GreetResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+  public static io.grpc.MethodDescriptor<Greeting.GreetRequest,
+      Greeting.GreetResponse> getGreetManyTimesMethod() {
+    io.grpc.MethodDescriptor<Greeting.GreetRequest, Greeting.GreetResponse> getGreetManyTimesMethod;
+    if ((getGreetManyTimesMethod = GreetServiceGrpc.getGreetManyTimesMethod) == null) {
+      synchronized (GreetServiceGrpc.class) {
+        if ((getGreetManyTimesMethod = GreetServiceGrpc.getGreetManyTimesMethod) == null) {
+          GreetServiceGrpc.getGreetManyTimesMethod = getGreetManyTimesMethod = 
+              io.grpc.MethodDescriptor.<Greeting.GreetRequest, Greeting.GreetResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "great.GreetService", "greetManyTimes"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  Greeting.GreetRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  Greeting.GreetResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new GreetServiceMethodDescriptorSupplier("greetManyTimes"))
+                  .build();
+          }
+        }
+     }
+     return getGreetManyTimesMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -88,6 +121,13 @@ public final class GreetServiceGrpc {
       asyncUnimplementedUnaryCall(getGreetMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void greetManyTimes(Greeting.GreetRequest request,
+                               io.grpc.stub.StreamObserver<Greeting.GreetResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getGreetManyTimesMethod(), responseObserver);
+    }
+
     @Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -97,6 +137,13 @@ public final class GreetServiceGrpc {
                 Greeting.GreetRequest,
                 Greeting.GreetResponse>(
                   this, METHODID_GREET)))
+          .addMethod(
+            getGreetManyTimesMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                Greeting.GreetRequest,
+                Greeting.GreetResponse>(
+                  this, METHODID_GREET_MANY_TIMES)))
           .build();
     }
   }
@@ -129,6 +176,14 @@ public final class GreetServiceGrpc {
       asyncUnaryCall(
           getChannel().newCall(getGreetMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void greetManyTimes(Greeting.GreetRequest request,
+                               io.grpc.stub.StreamObserver<Greeting.GreetResponse> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getGreetManyTimesMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -157,6 +212,14 @@ public final class GreetServiceGrpc {
     public Greeting.GreetResponse greet(Greeting.GreetRequest request) {
       return blockingUnaryCall(
           getChannel(), getGreetMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public java.util.Iterator<Greeting.GreetResponse> greetManyTimes(
+        Greeting.GreetRequest request) {
+      return blockingServerStreamingCall(
+          getChannel(), getGreetManyTimesMethod(), getCallOptions(), request);
     }
   }
 
@@ -191,6 +254,7 @@ public final class GreetServiceGrpc {
   }
 
   private static final int METHODID_GREET = 0;
+  private static final int METHODID_GREET_MANY_TIMES = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -211,6 +275,10 @@ public final class GreetServiceGrpc {
       switch (methodId) {
         case METHODID_GREET:
           serviceImpl.greet((Greeting.GreetRequest) request,
+              (io.grpc.stub.StreamObserver<Greeting.GreetResponse>) responseObserver);
+          break;
+        case METHODID_GREET_MANY_TIMES:
+          serviceImpl.greetManyTimes((Greeting.GreetRequest) request,
               (io.grpc.stub.StreamObserver<Greeting.GreetResponse>) responseObserver);
           break;
         default:
@@ -275,6 +343,7 @@ public final class GreetServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new GreetServiceFileDescriptorSupplier())
               .addMethod(getGreetMethod())
+              .addMethod(getGreetManyTimesMethod())
               .build();
         }
       }

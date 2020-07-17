@@ -2,12 +2,13 @@ package sai.service;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import proto.sum.AdditionGrpc;
-import proto.sum.Sum;
+import proto.greet.GreetServiceGrpc;
+import proto.greet.Greeting;
 
 import java.io.IOException;
+import java.util.Iterator;
 
-public class App {
+public class GrpcClient {
     public static void main(String[] args) throws InterruptedException, IOException {
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9000)
@@ -28,13 +29,23 @@ public class App {
 
         Greeting.GreetResponse response = greetClient.greet(request);*/
 
-        AdditionGrpc.AdditionBlockingStub addingClient = AdditionGrpc.newBlockingStub(channel);
+        /*AdditionGrpc.AdditionBlockingStub addingClient = AdditionGrpc.newBlockingStub(channel);
 
         Sum.Request request = Sum.Request.newBuilder().setA(3).setB(10).build();
 
         Sum.Response response = addingClient.addThem(request);
 
-        System.out.println("sum -> " + response.getC());
+        System.out.println("sum -> " + response.getC());*/
+
+        GreetServiceGrpc.GreetServiceBlockingStub grpcClient = GreetServiceGrpc.newBlockingStub(channel);
+
+        Greeting.GreetRequest request = Greeting.GreetRequest.newBuilder()
+                                                             .setGreetings(Greeting.GreetingName.newBuilder().setFirstName("STG"))
+                                                             .build();
+
+        Iterator<Greeting.GreetResponse> greetResponseIterator = grpcClient.greetManyTimes(request);
+
+        greetResponseIterator.forEachRemaining(System.out::println);
 
         System.out.println("shuting down channel");
         channel.shutdown();
