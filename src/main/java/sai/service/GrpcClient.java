@@ -2,11 +2,8 @@ package sai.service;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import proto.greet.GreetServiceGrpc;
-import proto.greet.Greeting;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 public class GrpcClient {
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -37,7 +34,7 @@ public class GrpcClient {
 
         System.out.println("sum -> " + response.getC());*/
 
-        GreetServiceGrpc.GreetServiceBlockingStub grpcClient = GreetServiceGrpc.newBlockingStub(channel);
+      /*  GreetServiceGrpc.GreetServiceBlockingStub grpcClient = GreetServiceGrpc.newBlockingStub(channel);
 
         Greeting.GreetRequest request = Greeting.GreetRequest.newBuilder()
                                                              .setGreetings(Greeting.GreetingName.newBuilder().setFirstName("STG"))
@@ -46,6 +43,9 @@ public class GrpcClient {
         Iterator<Greeting.GreetResponse> greetResponseIterator = grpcClient.greetManyTimes(request);
 
         greetResponseIterator.forEachRemaining(System.out::println);
+*/
+        ClientServiceImpl clientService = new ClientServiceImpl();
+        clientService.getClientInfo(channel);
 
         System.out.println("shuting down channel");
         channel.shutdown();
