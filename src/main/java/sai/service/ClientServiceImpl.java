@@ -2,6 +2,9 @@ package sai.service;
 
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
+import proto.cal.CalculatorGrpc;
+import proto.cal.CalculatorOuterClass.Request;
+import proto.cal.CalculatorOuterClass.Response;
 import proto.greet.GreetServiceGrpc;
 import proto.greet.Greeting;
 import proto.prime.Prime;
@@ -76,7 +79,48 @@ public class ClientServiceImpl {
     }
 
     public void clientStreamingOperaions(ManagedChannel channel) {
-        doGreetClientStreaming(channel);
+//        doGreetClientStreaming(channel);
+
+        doAverageOfNumbersClientStreaming(channel);
+    }
+
+    private void doAverageOfNumbersClientStreaming(ManagedChannel channel) {
+        CalculatorGrpc.CalculatorStub calClient = CalculatorGrpc.newStub(channel);
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        StreamObserver<Request> requestStreamObserver = calClient.getAverage(new StreamObserver<Response>() {
+            @Override
+            public void onNext(Response response) {
+                System.out.println("the average sum from the server is :" + response.getAvg());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        });
+
+        requestStreamObserver.onNext(Request.newBuilder().setNumbers(1).build());
+        requestStreamObserver.onNext(Request.newBuilder().setNumbers(2).build());
+        requestStreamObserver.onNext(Request.newBuilder().setNumbers(3).build());
+        requestStreamObserver.onNext(Request.newBuilder().setNumbers(4).build());
+
+        System.out.println("sent all numbers bro ");
+
+        requestStreamObserver.onCompleted();
+
+        try {
+            latch.await(10,TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void doGreetClientStreaming(ManagedChannel channel) {
