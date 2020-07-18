@@ -8,46 +8,27 @@ import java.io.IOException;
 public class GrpcClient {
     public static void main(String[] args) throws InterruptedException, IOException {
 
+        GrpcClient grpcClient = new GrpcClient();
+        grpcClient.runClient();
+
+    }
+
+    private void runClient() {
+        System.out.println("Starting the client");
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9000)
                                                       .usePlaintext()
                                                       .build();
+//        System.out.println("Unary Operations");
+//        new ClientServiceImpl().unaryOperations(channel);
 
-        System.out.println("creating stub");
-        /*GreetServiceGrpc.GreetServiceBlockingStub greetClient = GreetServiceGrpc.newBlockingStub(channel);
+//        System.out.println("Server Streaming Operations");
+//        new ClientServiceImpl().serverStreamingOperations(channel);
 
-        Greeting.GreetingName greetingName = Greeting.GreetingName.newBuilder()
-                                                                  .setFirstName("sai")
-                                                                  .setLastName("prakash")
-                                                                  .build();
+        System.out.println("Client side Streaming operations");
+        new ClientServiceImpl().clientStreamingOperaions(channel);
 
-        Greeting.GreetRequest request = Greeting.GreetRequest.newBuilder()
-                                                             .setGreetings(greetingName)
-                                                             .build();
 
-        Greeting.GreetResponse response = greetClient.greet(request);*/
-
-        /*AdditionGrpc.AdditionBlockingStub addingClient = AdditionGrpc.newBlockingStub(channel);
-
-        Sum.Request request = Sum.Request.newBuilder().setA(3).setB(10).build();
-
-        Sum.Response response = addingClient.addThem(request);
-
-        System.out.println("sum -> " + response.getC());*/
-
-      /*  GreetServiceGrpc.GreetServiceBlockingStub grpcClient = GreetServiceGrpc.newBlockingStub(channel);
-
-        Greeting.GreetRequest request = Greeting.GreetRequest.newBuilder()
-                                                             .setGreetings(Greeting.GreetingName.newBuilder().setFirstName("STG"))
-                                                             .build();
-
-        Iterator<Greeting.GreetResponse> greetResponseIterator = grpcClient.greetManyTimes(request);
-
-        greetResponseIterator.forEachRemaining(System.out::println);
-*/
-        ClientServiceImpl clientService = new ClientServiceImpl();
-        clientService.getClientInfo(channel);
-
-        System.out.println("shuting down channel");
+        System.out.println("shutting down channel");
         channel.shutdown();
     }
 }
